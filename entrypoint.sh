@@ -120,6 +120,7 @@ fi
 
 echo "[+] Copying contents of source repository folder $SOURCE_DIRECTORY to folder $TARGET_DIRECTORY in git repo $DESTINATION_REPOSITORY_NAME"
 cp -ra "$SOURCE_DIRECTORY"/. "$CLONE_DIR/$TARGET_DIRECTORY"
+ls -la
 cd "$CLONE_DIR"
 
 echo "[+] Files that will be pushed"
@@ -133,6 +134,10 @@ echo "[+] Set directory is safe ($CLONE_DIR)"
 # Related to https://github.com/cpina/github-action-push-to-another-repository/issues/64 and https://github.com/cpina/github-action-push-to-another-repository/issues/64
 # TODO: review before releasing it as a version
 git config --global --add safe.directory "$CLONE_DIR"
+
+echo "[+] git status:"
+git status
+
 
 echo "[+] Adding git commit"
 git add .
