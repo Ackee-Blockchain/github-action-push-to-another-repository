@@ -77,14 +77,19 @@ git config --global user.name "$USER_NAME"
 }
 ls -la "$CLONE_DIR"
 
+# $TARGET_DIRECTORY is '' by default
+ABSOLUTE_TARGET_DIRECTORY="$CLONE_DIR/$TARGET_DIRECTORY/"
+
+cd "$CLONE_DIR"
+echo "[+] Running git rm -rf --cached $ABSOLUTE_TARGET_DIRECTORY"
+git rm -rf --cached "$ABSOLUTE_TARGET_DIRECTORY"
+cd -
+
 TEMP_DIR=$(mktemp -d)
 # This mv has been the easier way to be able to remove files that were there
 # but not anymore. Otherwise we had to remove the files from "$CLONE_DIR",
 # including "." and with the exception of ".git/"
 mv "$CLONE_DIR/.git" "$TEMP_DIR/.git"
-
-# $TARGET_DIRECTORY is '' by default
-ABSOLUTE_TARGET_DIRECTORY="$CLONE_DIR/$TARGET_DIRECTORY/"
 
 echo "[+] Deleting $ABSOLUTE_TARGET_DIRECTORY"
 rm -rf "$ABSOLUTE_TARGET_DIRECTORY"
@@ -119,8 +124,7 @@ then
 fi
 
 echo "[+] Copying contents of source repository folder $SOURCE_DIRECTORY to folder $TARGET_DIRECTORY in git repo $DESTINATION_REPOSITORY_NAME"
-cp -ra "$SOURCE_DIRECTORY"/. "$CLONE_DIR/$TARGET_DIRECTORY"
-ls -la
+cp -ra "$SOURCE_DIRECTORY"/* "$CLONE_DIR/$TARGET_DIRECTORY"
 cd "$CLONE_DIR"
 
 echo "[+] Files that will be pushed"
@@ -134,10 +138,6 @@ echo "[+] Set directory is safe ($CLONE_DIR)"
 # Related to https://github.com/cpina/github-action-push-to-another-repository/issues/64 and https://github.com/cpina/github-action-push-to-another-repository/issues/64
 # TODO: review before releasing it as a version
 git config --global --add safe.directory "$CLONE_DIR"
-
-echo "[+] git status:"
-git status
-
 
 echo "[+] Adding git commit"
 git add .
